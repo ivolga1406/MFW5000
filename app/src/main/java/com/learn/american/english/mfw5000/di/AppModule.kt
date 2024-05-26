@@ -1,12 +1,12 @@
 package com.learn.american.english.mfw5000.di
 
+import RepositoryImpl
 import android.content.Context
 import android.provider.UserDictionary.Words.WORD
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.learn.american.english.mfw5000.Constants.WORDS
-import com.learn.american.english.mfw5000.data.repository.RepositoryImpl
 import com.learn.american.english.mfw5000.ui.theme.Repository
 import dagger.Module
 import dagger.Provides
