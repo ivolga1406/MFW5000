@@ -1,0 +1,139 @@
+I have a kotlin program in android studio build with MVVM and MVI patterns and Jetpack compose. There is program:
+package com.learn.american.english.mfw5000.data.model
+
+abstract class Item {
+
+    open var id: String? = null
+    open var number: Int? = 0
+    open var word: String? = null
+    open var part_of_speech: String? = null
+    open var definition: String? = null
+    open var example_en: String? = null
+    open var example_ru: String? = null
+}
+
+
+package com.learn.american.english.mfw5000.data.model
+
+data class Word(
+    override var  id: String? = null,
+    override var  number: Int? = 0,
+    override var  word: String? = "",
+    override var  part_of_speech: String? = null,
+    override var  definition: String? = null,
+    override var  example_en: String? = null,
+    override var  example_ru: String? = null
+):Item()
+
+package com.learn.american.english.mfw5000.ui
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.learn.american.english.mfw5000.data.model.Response
+import com.learn.american.english.mfw5000.data.model.Word
+import com.learn.american.english.mfw5000.ui.theme.Repository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class ViewModel @Inject constructor(
+//    private val sharedPreferencesHelper: SharedPreferencesHelper,
+    private val repo: Repository,
+): ViewModel() {
+
+    var wordsResponse by mutableStateOf<Response<List<Word>>>(Response.Loading)
+        private set
+
+    init {
+        getWords()
+    }
+
+    private fun getWords() = viewModelScope.launch {
+        repo.getWordsFromFirestore().collect { response ->
+            wordsResponse = response
+        }
+    }
+
+}
+
+package com.learn.american.english.mfw5000.ui.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+
+@ExperimentalCoroutinesApi
+@Composable
+fun Navigation() { // Kotlin functions should start with a capital letter
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "words") {
+        composable("words") {
+            WordsScreen(navController = navController)
+        }
+    }
+}
+
+
+package com.learn.american.english.mfw5000.ui.navigation
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.learn.american.english.mfw5000.ui.ViewModel
+import com.learn.american.english.mfw5000.ui.composables.Items
+import com.learn.american.english.mfw5000.ui.composables.ItemsContent
+import com.learn.american.english.mfw5000.ui.composables.TopBar
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WordsScreen(
+    viewModel: ViewModel = hiltViewModel(),
+    navController: NavController
+) {
+    Scaffold(
+        topBar = {
+            TopBar()
+        },
+        content = { padding ->
+            // Use the appropriate composable for series
+            Items(viewModelResponse = viewModel.wordsResponse,
+                content = { word ->
+                    // Apply the padding to the content
+                    Box(modifier = Modifier.padding(padding)) {
+                        ItemsContent(
+                            padding = padding,
+                            items = word,
+                            deleteitem = { seriesId ->
+//                                viewModel.deleteSeries(seriesId)
+                            },
+//                            onClick = { seriesId -> navController.navigate("books/${seriesId}")}
+                            onClick = { }
+                        )
+                    }
+                }
+            )
+        },
+    )
+}
+
+
+change the user interface and buizness logic of the program:
+1) At start of the program, I wanna see list with items like this: '1-50', '51-100', '101-150' and so on.
+2) if clicked on '1-50', I want to get first 50 words and show second screen wich is empty, if '51-100' was clicked, I want to get second 50 words and show second screen wich is empty, and so on
+3) Get mp3 of the first word from Firebase Storage. Name of the mp3 file is equal to feild 'word'. Play mp3 file
+4) If user swipe to the left - exclude the word from playing list, play sound of the next word
+5) if user swipe to the right - show third screen with all information about the Item word. any swipe on that screen - return to the second screen and play next word.
+6)  then you are in the end of the playing list - start again
+7) when playing lost will be empty, give focus to first screen
