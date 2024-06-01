@@ -9,23 +9,17 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.learn.american.english.mfw5000.data.model.Item
-import com.learn.american.english.mfw5000.data.model.Response
 import com.learn.american.english.mfw5000.data.model.Word
 import com.learn.american.english.mfw5000.ui.ViewModel
 import com.learn.american.english.mfw5000.ui.composables.ItemCard
 import com.learn.american.english.mfw5000.ui.composables.Items
 import com.learn.american.english.mfw5000.ui.composables.TopBar
 import com.learn.american.english.mfw5000.utils.AudioPlayer
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,12 +57,10 @@ fun WordsScreen(
 
 @Composable
 fun WordsList(
-    items: List<Item>,
+    items: List<Word>,
     navController: NavController,
     onWordClick: (Word) -> Unit
 ) {
-    var currentWordIndex by remember { mutableStateOf(0) }
-    val currentWord = items.getOrNull(currentWordIndex)
     val context = LocalContext.current
     val audioPlayer = remember { AudioPlayer(context) }
 
@@ -76,15 +68,8 @@ fun WordsList(
         items(items) { word ->
             ItemCard(
                 word = word,
-                deleteBook = { },
-                onClick = { navController.navigate("word_details/${word.id}") }
-            )
-        }
-    }
-
-    LaunchedEffect(currentWord) {
-        currentWord?.let {
-            audioPlayer.playAudio(it.word.orEmpty())
+                deleteBook = { }
+            ) { navController.navigate("word_details/${word.id}") }
         }
     }
 

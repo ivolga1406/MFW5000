@@ -2,7 +2,6 @@ package com.learn.american.english.mfw5000.ui.composables
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -14,8 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.learn.american.english.mfw5000.data.model.Item
-import com.learn.american.english.mfw5000.ui.composables.TextDifficulty
-import com.learn.american.english.mfw5000.ui.composables.TextTitle
 import com.learn.american.english.mfw5000.utils.AudioPlayer
 import kotlin.math.roundToInt
 
