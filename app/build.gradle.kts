@@ -125,6 +125,11 @@ dependencies {
     //getting pictures
     implementation("io.coil-kt:coil-compose:2.2.2")
 
+    //for caching mp3 files
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("com.google.code.gson:gson:2.9.0")
+
+
 
 
 

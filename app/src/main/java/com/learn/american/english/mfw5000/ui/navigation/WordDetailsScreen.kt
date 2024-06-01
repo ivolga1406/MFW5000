@@ -3,7 +3,9 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -77,19 +79,37 @@ fun WordDetailsScreen(
             TopBar(title = (wordDetail as? Response.Success)?.data?.word ?: "Word Details")
         },
         content = {
-            Box(modifier = Modifier
+            LazyColumn(modifier = Modifier
                 .fillMaxSize()
-                .clickable { navController.popBackStack() }) {
-                when (wordDetail) {
-                    is Response.Loading -> Text("Loading...")
-                    is Response.Success -> {
-                        val word = (wordDetail as Response.Success<Word>).data
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = "Word: ${word.word}")
-                            Text(text = "Part of Speech: ${word.part_of_speech}")
-                            Text(text = "Definition: ${word.definition}")
-                            Text(text = "Example (EN): ${word.example_en}")
-                            Text(text = "Example (RU): ${word.example_ru}")
+                .padding(it)
+                .clickable { navController.popBackStack() }
+                .padding(16.dp)
+            ) {
+                item {
+                    when (wordDetail) {
+                        is Response.Loading -> Text("Loading...")
+                        is Response.Success -> {
+                            val word = (wordDetail as Response.Success<Word>).data
+                            Column {
+                                word.part_of_speech?.let {
+                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                }
+
+                                word.definition?.let {
+                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
+                                    Spacer(modifier = Modifier.height(40.dp))
+                                }
+
+                                word.example_en?.let {
+                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                }
+
+                                word.example_ru?.let {
+                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                }
 
                             val storageReference = FirebaseStorage.getInstance().reference.child("5000_words/jpg/${word.word}.jpg")
                             storageReference.downloadUrl.addOnSuccessListener { uri ->
@@ -101,15 +121,15 @@ fun WordDetailsScreen(
                                 Log.e("WordDetailsScreen", "Error loading image", e)
                             }
 
-                            val audioStorageReference = FirebaseStorage.getInstance().reference.child("5000_words/mp3/${word.word}.mp3")
-                            audioStorageReference.downloadUrl.addOnSuccessListener { uri ->
-                                audioPlayer.playAudio(uri.toString())
-                                audioError = null
-                                Log.d("WordDetailsScreen", "Audio URL: $uri")
-                            }.addOnFailureListener { e ->
-                                audioError = "Error loading audio: ${e.message}"
-                                Log.e("WordDetailsScreen", "Error loading audio", e)
-                            }
+                                val audioStorageReference = FirebaseStorage.getInstance().reference.child("5000_words/mp3/${word.word}.mp3")
+                                audioStorageReference.downloadUrl.addOnSuccessListener { uri ->
+                                    audioPlayer.playAudio(uri.toString())
+                                    audioError = null
+                                    Log.d("WordDetailsScreen", "Audio URL: $uri")
+                                }.addOnFailureListener { e ->
+                                    audioError = "Error loading audio: ${e.message}"
+                                    Log.e("WordDetailsScreen", "Error loading audio", e)
+                                }
 
                             imageUrl?.let { url ->
                                 Image(
@@ -122,18 +142,29 @@ fun WordDetailsScreen(
                                 )
                             }
 
-                            imageError?.let { error ->
-                                Text(text = error, color = androidx.compose.ui.graphics.Color.Red)
-                            }
-
-                            audioError?.let { error ->
-                                Text(text = error, color = androidx.compose.ui.graphics.Color.Red)
+//                            imageError?.let { error ->
+//                                Text(text = error, color = androidx.compose.ui.graphics.Color.Red)
+//                            }
+//
+//                             audioError?.let { error ->
+//                                Text(text = error, color = androidx.compose.ui.graphics.Color.Red)
+//                             }
                             }
                         }
+                        is Response.Failure -> Text("Error: ${(wordDetail as Response.Failure).e?.message}")
                     }
-                    is Response.Failure -> Text("Error: ${(wordDetail as Response.Failure).e?.message}")
                 }
             }
         }
     )
 }
+
+
+
+
+
+
+
+
+
+
