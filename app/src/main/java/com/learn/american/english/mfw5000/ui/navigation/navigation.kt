@@ -1,7 +1,5 @@
 package com.learn.american.english.mfw5000.ui.navigation
 
-import WordDetailsScreen
-import WordsScreen
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -14,7 +12,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 fun Navigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "word_ranges") {
+    NavHost(navController = navController, startDestination = "initial_screen") {
+        composable("initial_screen") {
+            InitialScreen(navController = navController)
+        }
         composable("word_ranges") {
             WordRangesScreen(navController = navController)
         }
@@ -33,4 +34,3 @@ fun Navigation() {
         }
     }
 }
-

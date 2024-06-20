@@ -1,7 +1,7 @@
-import android.annotation.SuppressLint
+package com.learn.american.english.mfw5000.ui.navigation
+
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,8 +22,8 @@ import com.learn.american.english.mfw5000.data.model.Response
 import com.learn.american.english.mfw5000.data.model.Word
 import com.learn.american.english.mfw5000.ui.ViewModel
 import com.learn.american.english.mfw5000.utils.AudioPlayer
+import java.io.File
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WordDetailsScreen(
@@ -31,41 +31,9 @@ fun WordDetailsScreen(
     viewModel: ViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    var imageUrl by remember { mutableStateOf<String?>(null) }
-    var imageError by remember { mutableStateOf<String?>(null) }
-    var audioError by remember { mutableStateOf<String?>(null) }
     val wordDetail by viewModel.wordDetail.collectAsState()
     val context = LocalContext.current
     val audioPlayer = remember { AudioPlayer(context) }
-
-    LaunchedEffect(wordId) {
-        if (wordId != null) {
-            viewModel.getWordById(wordId)
-            Log.d("WordDetailsScreen", "Fetching image and audio for word ID: $wordId")
-//            val storageReference = FirebaseStorage.getInstance().reference.child("5000_words/jpg/$wordId.jpg")
-//            storageReference.downloadUrl.addOnSuccessListener { uri ->
-//                imageUrl = uri.toString()
-//                imageError = null
-//                Log.d("WordDetailsScreen", "Image URL: $uri")
-//            }.addOnFailureListener { e ->
-//                imageError = "Error loading image: ${e.message}"
-//                Log.e("WordDetailsScreen", "Error loading image", e)
-//            }
-//
-//            val audioStorageReference = FirebaseStorage.getInstance().reference.child("5000_words/mp3/$wordId.mp3")
-//            audioStorageReference.downloadUrl.addOnSuccessListener { uri ->
-//                audioPlayer.playAudio(uri.toString())
-//                audioError = null
-//                Log.d("WordDetailsScreen", "Audio URL: $uri")
-//            }.addOnFailureListener { e ->
-//                audioError = "Error loading audio: ${e.message}"
-//                Log.e("WordDetailsScreen", "Error loading audio", e)
-//            }
-        } else {
-            Log.e("WordDetailsScreen", "Word ID is null")
-            imageError = "Word ID is null"
-        }
-    }
 
     DisposableEffect(audioPlayer) {
         onDispose {
@@ -82,7 +50,6 @@ fun WordDetailsScreen(
             LazyColumn(modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
-                .clickable { navController.popBackStack() }
                 .padding(16.dp)
             ) {
                 item {
@@ -111,44 +78,24 @@ fun WordDetailsScreen(
                                     Spacer(modifier = Modifier.height(20.dp))
                                 }
 
-                            val storageReference = FirebaseStorage.getInstance().reference.child("5000_words/jpg/${word.word}.jpg")
-                            storageReference.downloadUrl.addOnSuccessListener { uri ->
-                                imageUrl = uri.toString()
-                                imageError = null
-                                Log.d("WordDetailsScreen", "Image URL: $uri")
-                            }.addOnFailureListener { e ->
-                                imageError = "Error loading image: ${e.message}"
-                                Log.e("WordDetailsScreen", "Error loading image", e)
-                            }
-
-                                val audioStorageReference = FirebaseStorage.getInstance().reference.child("5000_words/mp3/${word.word}.mp3")
-                                audioStorageReference.downloadUrl.addOnSuccessListener { uri ->
-                                    audioPlayer.playAudio(uri.toString())
-                                    audioError = null
-                                    Log.d("WordDetailsScreen", "Audio URL: $uri")
-                                }.addOnFailureListener { e ->
-                                    audioError = "Error loading audio: ${e.message}"
-                                    Log.e("WordDetailsScreen", "Error loading audio", e)
+                                val imageFile = File(context.filesDir, "${word.word}.jpg")
+                                if (imageFile.exists()) {
+                                    Image(
+                                        painter = rememberImagePainter(imageFile),
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
                                 }
 
-                            imageUrl?.let { url ->
-                                Image(
-                                    painter = rememberImagePainter(url),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-
-//                            imageError?.let { error ->
-//                                Text(text = error, color = androidx.compose.ui.graphics.Color.Red)
-//                            }
-//
-//                             audioError?.let { error ->
-//                                Text(text = error, color = androidx.compose.ui.graphics.Color.Red)
-//                             }
+                                val audioFile = File(context.filesDir, "${word.word}.mp3")
+                                if (audioFile.exists()) {
+                                    audioPlayer.playAudio(audioFile.absolutePath)
+                                } else {
+                                    Text("Audio not available", Modifier.padding(8.dp))
+                                }
                             }
                         }
                         is Response.Failure -> Text("Error: ${(wordDetail as Response.Failure).e?.message}")
@@ -158,13 +105,3 @@ fun WordDetailsScreen(
         }
     )
 }
-
-
-
-
-
-
-
-
-
-

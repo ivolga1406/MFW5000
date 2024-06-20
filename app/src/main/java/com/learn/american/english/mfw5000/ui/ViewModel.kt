@@ -1,5 +1,6 @@
 package com.learn.american.english.mfw5000.ui
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learn.american.english.mfw5000.data.model.Response
@@ -10,8 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.tasks.await
 
 @HiltViewModel
 class ViewModel @Inject constructor(
@@ -23,6 +22,9 @@ class ViewModel @Inject constructor(
 
     private val _wordDetail = MutableStateFlow<Response<Word>>(Response.Loading)
     val wordDetail: StateFlow<Response<Word>> = _wordDetail
+
+    private val _downloadResponse = MutableStateFlow<Response<Unit>>(Response.Loading)
+    val downloadResponse: StateFlow<Response<Unit>> = _downloadResponse
 
     fun getWords(start: Int, end: Int) = viewModelScope.launch {
         repo.getWordsFromFirestore(start, end).collect { response ->
@@ -38,5 +40,11 @@ class ViewModel @Inject constructor(
 
     fun resetWords() {
         _wordsResponse.value = Response.Loading
+    }
+
+    fun downloadAllMedia(context: Context) = viewModelScope.launch {
+        repo.downloadAllMedia(context).collect { response ->
+            _downloadResponse.value = response
+        }
     }
 }

@@ -129,11 +129,6 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.code.gson:gson:2.9.0")
 
-
-
-
-
-
-
-
+    // Firebase Authentication Dependency
+    implementation("com.google.firebase:firebase-auth:21.1.0")
 }

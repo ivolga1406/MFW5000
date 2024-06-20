@@ -1,3 +1,5 @@
+package com.learn.american.english.mfw5000.ui.navigation
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
