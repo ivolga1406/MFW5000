@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+
 @ExperimentalCoroutinesApi
 @Composable
 fun Navigation() {
@@ -34,3 +35,4 @@ fun Navigation() {
         }
     }
 }
+

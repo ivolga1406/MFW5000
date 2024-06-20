@@ -71,7 +71,9 @@ fun WordsList(
             ItemCard(
                 word = word,
                 deleteBook = { }
-            ) { navController.navigate("word_details/${word.id}") }
+            ) { wordId ->
+                navController.navigate("word_details/$wordId")
+            }
         }
     }
 
@@ -82,3 +84,4 @@ fun WordsList(
         }
     }
 }
+

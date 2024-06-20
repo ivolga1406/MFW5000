@@ -42,6 +42,12 @@ fun WordDetailsScreen(
         }
     }
 
+    LaunchedEffect(wordId) {
+        wordId?.let {
+            viewModel.getWordById(it)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopBar(title = (wordDetail as? Response.Success)?.data?.word ?: "Word Details")
@@ -105,3 +111,4 @@ fun WordDetailsScreen(
         }
     )
 }
+
