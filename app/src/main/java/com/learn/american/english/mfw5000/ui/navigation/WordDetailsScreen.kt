@@ -98,7 +98,12 @@ fun WordDetailsScreen(
 
                                 val audioFile = File(context.filesDir, "${word.word}.mp3")
                                 if (audioFile.exists()) {
-                                    audioPlayer.playAudio(audioFile.absolutePath)
+                                    try {
+                                        audioPlayer.playAudio(audioFile.absolutePath)
+                                    } catch (e: Exception) {
+                                        Log.e("WordDetailsScreen", "Failed to play audio: ${e.message}")
+                                        Text("Audio not available", Modifier.padding(8.dp))
+                                    }
                                 } else {
                                     Text("Audio not available", Modifier.padding(8.dp))
                                 }
@@ -111,4 +116,3 @@ fun WordDetailsScreen(
         }
     )
 }
-

@@ -72,35 +72,39 @@ class RepositoryImpl @Inject constructor(
 
             val jpgFiles = storage.reference.child("5000_words/jpg").listAll().await()
             for (file in jpgFiles.items) {
-                val localFile = File(localDir, "${file.name}.jpg")
-                file.downloadUrl.addOnSuccessListener { uri ->
-                    Log.d("RepositoryImpl", "Downloading image: ${file.name}")
-                    uri.let { url ->
-                        file.getFile(localFile).addOnSuccessListener {
-                            Log.d("RepositoryImpl", "Downloaded image: ${file.name}")
-                        }.addOnFailureListener { e ->
-                            Log.e("RepositoryImpl", "Failed to download image: ${file.name}", e)
+                val localFile = File(localDir, "${file.name}")
+                if (!localFile.exists()) {
+                    file.downloadUrl.addOnSuccessListener { uri ->
+                        Log.d("RepositoryImpl", "Downloading image: ${file.name}")
+                        uri.let { url ->
+                            file.getFile(localFile).addOnSuccessListener {
+                                Log.d("RepositoryImpl", "Downloaded image: ${file.name}")
+                            }.addOnFailureListener { e ->
+                                Log.e("RepositoryImpl", "Failed to download image: ${file.name}", e)
+                            }
                         }
+                    }.addOnFailureListener { e ->
+                        Log.e("RepositoryImpl", "Failed to get download URL for image: ${file.name}", e)
                     }
-                }.addOnFailureListener { e ->
-                    Log.e("RepositoryImpl", "Failed to get download URL for image: ${file.name}", e)
                 }
             }
 
             val mp3Files = storage.reference.child("5000_words/mp3").listAll().await()
             for (file in mp3Files.items) {
-                val localFile = File(localDir, "${file.name}.mp3")
-                file.downloadUrl.addOnSuccessListener { uri ->
-                    Log.d("RepositoryImpl", "Downloading audio: ${file.name}")
-                    uri.let { url ->
-                        file.getFile(localFile).addOnSuccessListener {
-                            Log.d("RepositoryImpl", "Downloaded audio: ${file.name}")
-                        }.addOnFailureListener { e ->
-                            Log.e("RepositoryImpl", "Failed to download audio: ${file.name}", e)
+                val localFile = File(localDir, "${file.name}")
+                if (!localFile.exists()) {
+                    file.downloadUrl.addOnSuccessListener { uri ->
+                        Log.d("RepositoryImpl", "Downloading audio: ${file.name}")
+                        uri.let { url ->
+                            file.getFile(localFile).addOnSuccessListener {
+                                Log.d("RepositoryImpl", "Downloaded audio: ${file.name}")
+                            }.addOnFailureListener { e ->
+                                Log.e("RepositoryImpl", "Failed to download audio: ${file.name}", e)
+                            }
                         }
+                    }.addOnFailureListener { e ->
+                        Log.e("RepositoryImpl", "Failed to get download URL for audio: ${file.name}", e)
                     }
-                }.addOnFailureListener { e ->
-                    Log.e("RepositoryImpl", "Failed to get download URL for audio: ${file.name}", e)
                 }
             }
 
