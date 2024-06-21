@@ -84,7 +84,7 @@ fun WordDetailsScreen(
                                     Spacer(modifier = Modifier.height(20.dp))
                                 }
 
-                                val imageFile = File(context.filesDir, "${word.word}.jpg")
+                                val imageFile = File(context.filesDir, "jpg/${word.word}.jpg")
                                 if (imageFile.exists()) {
                                     Image(
                                         painter = rememberImagePainter(imageFile),
@@ -96,7 +96,7 @@ fun WordDetailsScreen(
                                     )
                                 }
 
-                                val audioFile = File(context.filesDir, "${word.word}.mp3")
+                                val audioFile = File(context.filesDir, "mp3/${word.word}.mp3")
                                 if (audioFile.exists()) {
                                     try {
                                         audioPlayer.playAudio(audioFile.absolutePath)
