@@ -11,22 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-
 @Composable
 fun WordRangesScreen(navController: NavController) {
-    val ranges = List(80) { i -> "${i * 50 + 1}-${(i + 1) * 50}" }
+    val ranges = List(80) { it } // Each item represents a collection number
     LazyColumn {
-        items(ranges) { range ->
-            val start = range.split("-")[0].toInt()
-            val end = range.split("-")[1].toInt()
+        items(ranges) { collectionNumber ->
+            val rangeText = "${collectionNumber * 50 + 1}-${(collectionNumber + 1) * 50}"
             Text(
-                text = range,
+                text = rangeText,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { navController.navigate("words/$start/$end") }
+                    .clickable { navController.navigate("words/$collectionNumber") }
                     .padding(16.dp)
             )
         }
     }
 }
-

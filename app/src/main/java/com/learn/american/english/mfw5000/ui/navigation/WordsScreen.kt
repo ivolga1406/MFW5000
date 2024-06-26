@@ -1,6 +1,7 @@
 package com.learn.american.english.mfw5000.ui.navigation
 
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,8 +24,7 @@ import com.learn.american.english.mfw5000.utils.AudioPlayer
 @Composable
 fun WordsScreen(
     viewModel: ViewModel = hiltViewModel(),
-    start: Int,
-    end: Int,
+    collectionNumber: Int,
     navController: NavController
 ) {
     val wordsResponse by viewModel.wordsResponse.collectAsState()
@@ -33,9 +33,10 @@ fun WordsScreen(
     var currentWordIndex by remember { mutableStateOf(0) }
     var isSwiping by remember { mutableStateOf(false) }
     val words = remember { mutableStateListOf<Word>() }
+    val temp = ""
 
-    LaunchedEffect(start, end) {
-        viewModel.getWords(start, end)
+    LaunchedEffect(collectionNumber) {
+        viewModel.getWordsCollection(collectionNumber)
     }
 
     LaunchedEffect(wordsResponse) {
@@ -90,6 +91,31 @@ fun WordsScreen(
                                     isSwiping = false
                                     navController.currentBackStackEntry?.savedStateHandle?.set("currentWordIndex", currentWordIndex)
                                     navController.navigate("word_details/${words[currentWordIndex].id}")
+                                }
+                            }
+                        }
+                    }
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onDragStart = {
+                                isSwiping = true
+                            },
+                            onDragEnd = {
+                                isSwiping = false
+                            }
+                        ) { change, dragAmount ->
+                            change.consume()
+                            if (isSwiping) {
+                                if (dragAmount > 100 || dragAmount < -100) {
+                                    isSwiping = false
+                                    val wordToExclude = words[currentWordIndex]
+                                    viewModel.excludeWordFromCollection(wordToExclude.id!!, collectionNumber)
+                                    words.removeAt(currentWordIndex)
+                                    if (currentWordIndex < words.size) {
+                                        audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
+                                    } else {
+                                        navController.popBackStack()
+                                    }
                                 }
                             }
                         }

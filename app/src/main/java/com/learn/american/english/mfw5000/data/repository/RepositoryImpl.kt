@@ -1,9 +1,6 @@
-// File: C:\Users\DellNotebookUser\AndroidStudioProjects\MFW5000\app\src\main\java\com\learn\american\english\mfw5000\data\repository\RepositoryImpl.kt
-
 package com.learn.american.english.mfw5000.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.toObject
@@ -28,21 +25,31 @@ class RepositoryImpl @Inject constructor(
     @Named("WordsRef") private val wordsRef: CollectionReference
 ) : Repository {
 
-    override fun getWordsFromFirestore(start: Int, end: Int): Flow<Response<List<Word>>> {
+    private val wordsCache = mutableMapOf<Int, MutableList<Word>>()
+
+    override fun getWordsCollection(collectionNumber: Int): Flow<Response<List<Word>>> {
         return flow {
             emit(Response.Loading)
             try {
-                val snapshot = wordsRef.orderBy("number")
-                    .whereGreaterThanOrEqualTo("number", start)
-                    .whereLessThanOrEqualTo("number", end)
-                    .get().await()
-                if (!snapshot.isEmpty) {
-                    val words = snapshot.documents.mapNotNull { document ->
-                        document.toObject<Word>()?.apply { id = document.id }
-                    }
-                    emit(Response.Success(words))
+                val cachedWords = wordsCache[collectionNumber]
+                if (cachedWords != null && cachedWords.isNotEmpty()) {
+                    emit(Response.Success(cachedWords))
                 } else {
-                    emit(Response.Failure(Exception("No data found")))
+                    val start = collectionNumber * 50 + 1
+                    val end = (collectionNumber + 1) * 50
+                    val snapshot = wordsRef.orderBy("number")
+                        .whereGreaterThanOrEqualTo("number", start)
+                        .whereLessThanOrEqualTo("number", end)
+                        .get().await()
+                    if (!snapshot.isEmpty) {
+                        val words = snapshot.documents.mapNotNull { document ->
+                            document.toObject<Word>()?.apply { id = document.id }
+                        }
+                        wordsCache[collectionNumber] = words.toMutableList()
+                        emit(Response.Success(words))
+                    } else {
+                        emit(Response.Failure(Exception("No data found")))
+                    }
                 }
             } catch (e: Exception) {
                 emit(Response.Failure(e))
@@ -80,7 +87,7 @@ class RepositoryImpl @Inject constructor(
             val mp3Dir = File(localDir, "mp3")
 
             if (!jpgDir.exists()) jpgDir.mkdirs()
-            if (!mp3Dir.exists()) mp3Dir.mkdirs()
+            if (!mp3Dir.exists()) jpgDir.mkdirs()
 
             val jpgZipRef = storage.reference.child("5000_words/all_jpg.zip")
             val mp3ZipRef = storage.reference.child("5000_words/all_mp3.zip")
@@ -116,5 +123,9 @@ class RepositoryImpl @Inject constructor(
             }
         }
         zipFile.delete() // Optionally delete the zip file after extraction
+    }
+
+    override fun excludeWordFromRange(wordId: String, collectionNumber: Int) {
+        wordsCache[collectionNumber] = wordsCache[collectionNumber]?.filterNot { it.id == wordId }?.toMutableList() ?: mutableListOf()
     }
 }

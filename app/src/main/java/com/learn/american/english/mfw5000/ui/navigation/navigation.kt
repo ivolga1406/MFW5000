@@ -7,7 +7,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-
 @ExperimentalCoroutinesApi
 @Composable
 fun Navigation() {
@@ -20,11 +19,10 @@ fun Navigation() {
         composable("word_ranges") {
             WordRangesScreen(navController = navController)
         }
-        composable("words/{start}/{end}") { backStackEntry ->
-            val start = backStackEntry.arguments?.getString("start")?.toIntOrNull() ?: 0
-            val end = backStackEntry.arguments?.getString("end")?.toIntOrNull() ?: 0
-            if (start > 0 && end > 0) {
-                WordsScreen(start = start, end = end, navController = navController)
+        composable("words/{collectionNumber}") { backStackEntry ->
+            val collectionNumber = backStackEntry.arguments?.getString("collectionNumber")?.toIntOrNull() ?: 0
+            if (collectionNumber >= 0) {
+                WordsScreen(collectionNumber = collectionNumber, navController = navController)
             } else {
                 Text("Invalid range")
             }
@@ -35,4 +33,3 @@ fun Navigation() {
         }
     }
 }
-

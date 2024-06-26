@@ -26,8 +26,8 @@ class ViewModel @Inject constructor(
     private val _downloadResponse = MutableStateFlow<Response<Unit>>(Response.Loading)
     val downloadResponse: StateFlow<Response<Unit>> = _downloadResponse
 
-    fun getWords(start: Int, end: Int) = viewModelScope.launch {
-        repo.getWordsFromFirestore(start, end).collect { response ->
+    fun getWordsCollection(collectionNumber: Int) = viewModelScope.launch {
+        repo.getWordsCollection(collectionNumber).collect { response ->
             _wordsResponse.value = response
         }
     }
@@ -36,6 +36,11 @@ class ViewModel @Inject constructor(
         repo.getWordById(wordId).collect { response ->
             _wordDetail.value = response
         }
+    }
+
+    fun excludeWordFromCollection(wordId: String, collectionNumber: Int) = viewModelScope.launch {
+        repo.excludeWordFromRange(wordId, collectionNumber)
+        getWordsCollection(collectionNumber)
     }
 
     fun resetWords() {

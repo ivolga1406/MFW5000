@@ -1,12 +1,13 @@
 package com.learn.american.english.mfw5000.ui.theme
 
-import kotlinx.coroutines.flow.Flow
+import android.content.Context
 import com.learn.american.english.mfw5000.data.model.Response
 import com.learn.american.english.mfw5000.data.model.Word
-import android.content.Context
+import kotlinx.coroutines.flow.Flow
 
 interface Repository {
-    fun getWordsFromFirestore(start: Int, end: Int): Flow<Response<List<Word>>>
+    fun getWordsCollection(collectionNumber: Int): Flow<Response<List<Word>>>
     fun getWordById(wordId: String): Flow<Response<Word>>
     suspend fun downloadAllMedia(context: Context): Flow<Response<Unit>>
+    fun excludeWordFromRange(wordId: String, collectionNumber: Int)
 }
