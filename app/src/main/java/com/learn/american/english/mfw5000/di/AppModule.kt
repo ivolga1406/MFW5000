@@ -11,6 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -21,10 +22,12 @@ object AppModule {
 //    }
 
     @Provides
+    @Singleton
     @Named("WordsRef")
     fun provideWordsRef() = Firebase.firestore.collection(WORDS)
 
     @Provides
+    @Singleton
     fun provideRepository(
         @Named("WordsRef") wordsRef: CollectionReference
     ): Repository = RepositoryImpl(wordsRef)

@@ -33,7 +33,6 @@ fun WordsScreen(
     var currentWordIndex by remember { mutableStateOf(0) }
     var isSwiping by remember { mutableStateOf(false) }
     val words = remember { mutableStateListOf<Word>() }
-    val temp = ""
 
     LaunchedEffect(collectionNumber) {
         viewModel.getWordsCollection(collectionNumber)
