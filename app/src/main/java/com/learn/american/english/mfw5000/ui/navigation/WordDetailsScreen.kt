@@ -109,8 +109,6 @@ fun WordDetailsScreen(
                                         Log.e("WordDetailsScreen", "Failed to play audio: ${e.message}")
                                         Text("Audio not available", Modifier.padding(8.dp))
                                     }
-                                } else {
-                                    Text("Audio not available", Modifier.padding(8.dp))
                                 }
                             }
                         }
