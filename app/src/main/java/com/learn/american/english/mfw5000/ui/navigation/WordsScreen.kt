@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.learn.american.english.mfw5000.data.model.Word
@@ -29,6 +31,7 @@ fun WordsScreen(
     val context = LocalContext.current
     val audioPlayer = remember { AudioPlayer(context) }
     var currentWordIndex by remember { mutableStateOf(0) }
+    var isSwiping by remember { mutableStateOf(false) }
     val words = remember { mutableStateListOf<Word>() }
 
     LaunchedEffect(start, end) {
@@ -55,9 +58,18 @@ fun WordsScreen(
                     .fillMaxSize()
                     .padding(padding)
                     .pointerInput(Unit) {
-                        detectHorizontalDragGestures { change, dragAmount ->
+                        detectHorizontalDragGestures(
+                            onDragStart = {
+                                isSwiping = true
+                            },
+                            onDragEnd = {
+                                isSwiping = false
+                            }
+                        ) { change, dragAmount ->
                             change.consume()
-                            if (dragAmount < -100) {
+                            if (isSwiping && dragAmount < -100) {
+                                isSwiping = false
+                                println("swipe was made")
                                 currentWordIndex++
                                 if (currentWordIndex < words.size) {
                                     audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
@@ -67,7 +79,12 @@ fun WordsScreen(
                             }
                         }
                     }
-            )
+            ) {
+                Text(
+                    text = "Current word: $currentWordIndex / ${words.size}",
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         },
     )
 }
