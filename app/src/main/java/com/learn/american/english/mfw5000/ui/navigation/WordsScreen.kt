@@ -43,7 +43,17 @@ fun WordsScreen(
             words.clear()
             words.addAll((wordsResponse as com.learn.american.english.mfw5000.data.model.Response.Success<List<Word>>).data)
             if (words.isNotEmpty()) {
-                audioPlayer.playAudio("${context.filesDir}/mp3/${words[0].word}.mp3")
+                audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val savedIndex = navController.currentBackStackEntry?.savedStateHandle?.get<Int>("currentWordIndex")
+        savedIndex?.let {
+            currentWordIndex = it
+            if (currentWordIndex < words.size) {
+                audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
             }
         }
     }
@@ -67,14 +77,19 @@ fun WordsScreen(
                             }
                         ) { change, dragAmount ->
                             change.consume()
-                            if (isSwiping && dragAmount < -100) {
-                                isSwiping = false
-                                println("swipe was made")
-                                currentWordIndex++
-                                if (currentWordIndex < words.size) {
-                                    audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
-                                } else {
-                                    navController.popBackStack()
+                            if (isSwiping) {
+                                if (dragAmount < -100) {
+                                    isSwiping = false
+                                    currentWordIndex++
+                                    if (currentWordIndex < words.size) {
+                                        audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
+                                    } else {
+                                        navController.popBackStack()
+                                    }
+                                } else if (dragAmount > 100) {
+                                    isSwiping = false
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("currentWordIndex", currentWordIndex)
+                                    navController.navigate("word_details/${words[currentWordIndex].id}")
                                 }
                             }
                         }

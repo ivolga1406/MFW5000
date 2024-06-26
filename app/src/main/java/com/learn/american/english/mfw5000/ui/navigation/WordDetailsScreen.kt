@@ -1,12 +1,11 @@
 package com.learn.american.english.mfw5000.ui.navigation
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -34,7 +33,7 @@ fun WordDetailsScreen(
     val wordDetail by viewModel.wordDetail.collectAsState()
     val context = LocalContext.current
     val audioPlayer = remember { AudioPlayer(context) }
-    var shouldPlayAudio by remember { mutableStateOf(true) }
+    var shouldPlayNextAudio by remember { mutableStateOf(true) }
 
     DisposableEffect(audioPlayer) {
         onDispose {
@@ -60,7 +59,9 @@ fun WordDetailsScreen(
                     .padding(it)
                     .padding(16.dp)
                     .clickable {
-                        shouldPlayAudio = false
+                        shouldPlayNextAudio = false
+                        val currentWordIndex = navController.previousBackStackEntry?.savedStateHandle?.get<Int>("currentWordIndex") ?: 0
+                        navController.previousBackStackEntry?.savedStateHandle?.set("currentWordIndex", currentWordIndex + 1)
                         navController.popBackStack()
                     }
             ) {
@@ -71,25 +72,17 @@ fun WordDetailsScreen(
                             val word = (wordDetail as Response.Success<Word>).data
                             Column {
                                 word.part_of_speech?.let {
-                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
-                                    Spacer(modifier = Modifier.height(20.dp))
+                                    Text(text = "$it", modifier = Modifier.padding(8.dp))
                                 }
-
                                 word.definition?.let {
-                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
-                                    Spacer(modifier = Modifier.height(40.dp))
+                                    Text(text = "$it", modifier = Modifier.padding(8.dp))
                                 }
-
                                 word.example_en?.let {
-                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
-                                    Spacer(modifier = Modifier.height(20.dp))
+                                    Text(text = "$it", modifier = Modifier.padding(8.dp))
                                 }
-
                                 word.example_ru?.let {
-                                    Text(text = "$it", style = MaterialTheme.typography.bodyLarge)
-                                    Spacer(modifier = Modifier.height(20.dp))
+                                    Text(text = "$it", modifier = Modifier.padding(8.dp))
                                 }
-
                                 val imageFile = File(context.filesDir, "jpg/${word.word}.jpg")
                                 if (imageFile.exists()) {
                                     Image(
@@ -101,8 +94,7 @@ fun WordDetailsScreen(
                                         contentScale = ContentScale.Crop
                                     )
                                 }
-
-                                if (shouldPlayAudio) {
+                                if (shouldPlayNextAudio) {
                                     val audioFile = File(context.filesDir, "mp3/${word.word}.mp3")
                                     if (audioFile.exists()) {
                                         try {
