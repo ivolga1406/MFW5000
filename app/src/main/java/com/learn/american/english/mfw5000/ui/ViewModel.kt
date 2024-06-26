@@ -17,8 +17,6 @@ class ViewModel @Inject constructor(
     private val repo: Repository,
 ) : ViewModel() {
 
-    private val wordsCache = mutableMapOf<Int, MutableList<Word>>()
-
     private val _wordsResponse = MutableStateFlow<Response<List<Word>>>(Response.Loading)
     val wordsResponse: StateFlow<Response<List<Word>>> = _wordsResponse
 
@@ -29,16 +27,8 @@ class ViewModel @Inject constructor(
     val downloadResponse: StateFlow<Response<Unit>> = _downloadResponse
 
     fun getWordsCollection(collectionNumber: Int) = viewModelScope.launch {
-        val cachedWords = wordsCache[collectionNumber]
-        if (cachedWords != null && cachedWords.isNotEmpty()) {
-            _wordsResponse.value = Response.Success(cachedWords)
-        } else {
-            repo.getWordsCollection(collectionNumber).collect { response ->
-                if (response is Response.Success) {
-                    wordsCache[collectionNumber] = response.data.toMutableList()
-                }
-                _wordsResponse.value = response
-            }
+        repo.getWordsCollection(collectionNumber).collect { response ->
+            _wordsResponse.value = response
         }
     }
 
@@ -50,7 +40,6 @@ class ViewModel @Inject constructor(
 
     fun excludeWordFromCollection(wordId: String, collectionNumber: Int) = viewModelScope.launch {
         repo.excludeWordFromRange(wordId, collectionNumber)
-        wordsCache[collectionNumber]?.removeIf { it.id == wordId }
         getWordsCollection(collectionNumber)
     }
 

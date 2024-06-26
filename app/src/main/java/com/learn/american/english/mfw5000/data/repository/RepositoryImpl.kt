@@ -1,11 +1,14 @@
 package com.learn.american.english.mfw5000.data.repository
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.learn.american.english.mfw5000.data.model.Response
 import com.learn.american.english.mfw5000.data.model.Word
 import com.learn.american.english.mfw5000.ui.theme.Repository
@@ -22,10 +25,41 @@ import javax.inject.Singleton
 
 @Singleton
 class RepositoryImpl @Inject constructor(
-    @Named("WordsRef") private val wordsRef: CollectionReference
+    @Named("WordsRef") private val wordsRef: CollectionReference,
+    private val context: Context
 ) : Repository {
 
     private val wordsCache = mutableMapOf<Int, MutableList<Word>>()
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("words_cache", Context.MODE_PRIVATE)
+    private val gson = Gson()
+
+    init {
+        loadCache()
+    }
+
+    private fun loadCache() {
+        val cachedJson = sharedPreferences.getString("wordsCache", null)
+        if (!cachedJson.isNullOrEmpty()) {
+            val type = object : TypeToken<MutableMap<Int, MutableList<Word>>>() {}.type
+            try {
+                val cachedData: MutableMap<Int, MutableList<Word>> = gson.fromJson(cachedJson, type)
+                wordsCache.putAll(cachedData)
+            } catch (e: Exception) {
+                e.printStackTrace() // Handle the exception as needed
+            }
+        }
+    }
+
+    private fun saveCache() {
+        val editor = sharedPreferences.edit()
+        try {
+            val json = gson.toJson(wordsCache)
+            editor.putString("wordsCache", json)
+            editor.apply()
+        } catch (e: Exception) {
+            e.printStackTrace() // Handle the exception as needed
+        }
+    }
 
     override fun getWordsCollection(collectionNumber: Int): Flow<Response<List<Word>>> {
         return flow {
@@ -46,6 +80,7 @@ class RepositoryImpl @Inject constructor(
                             document.toObject<Word>()?.apply { id = document.id }
                         }
                         wordsCache[collectionNumber] = words.toMutableList()
+                        saveCache()
                         emit(Response.Success(words))
                     } else {
                         emit(Response.Failure(Exception("No data found")))
@@ -127,5 +162,6 @@ class RepositoryImpl @Inject constructor(
 
     override fun excludeWordFromRange(wordId: String, collectionNumber: Int) {
         wordsCache[collectionNumber] = wordsCache[collectionNumber]?.filterNot { it.id == wordId }?.toMutableList() ?: mutableListOf()
+        saveCache()
     }
 }
