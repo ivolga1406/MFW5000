@@ -1,9 +1,8 @@
-// File: C:\Users\DellNotebookUser\AndroidStudioProjects\MFW5000\app\src\main\java\com\learn\american\english\mfw5000\ui\navigation\WordDetailsScreen.kt
-
 package com.learn.american.english.mfw5000.ui.navigation
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,8 +34,6 @@ fun WordDetailsScreen(
     val wordDetail by viewModel.wordDetail.collectAsState()
     val context = LocalContext.current
     val audioPlayer = remember { AudioPlayer(context) }
-    //to prevent from playing on exit screen, bad approach
-    //it is better to do something more smart instead
     var shouldPlayAudio by remember { mutableStateOf(true) }
 
     DisposableEffect(audioPlayer) {
@@ -57,10 +54,15 @@ fun WordDetailsScreen(
             TopBar(title = (wordDetail as? Response.Success)?.data?.word ?: "Word Details")
         },
         content = {
-            LazyColumn(modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(16.dp)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .padding(16.dp)
+                    .clickable {
+                        shouldPlayAudio = false
+                        navController.popBackStack()
+                    }
             ) {
                 item {
                     when (wordDetail) {
@@ -100,14 +102,15 @@ fun WordDetailsScreen(
                                     )
                                 }
 
-                                val audioFile = File(context.filesDir, "mp3/${word.word}.mp3")
-                                if (audioFile.exists() && shouldPlayAudio) {
-                                    try {
-                                        audioPlayer.playAudio(audioFile.absolutePath)
-                                        shouldPlayAudio = false // Ensure audio is not played again on return
-                                    } catch (e: Exception) {
-                                        Log.e("WordDetailsScreen", "Failed to play audio: ${e.message}")
-                                        Text("Audio not available", Modifier.padding(8.dp))
+                                if (shouldPlayAudio) {
+                                    val audioFile = File(context.filesDir, "mp3/${word.word}.mp3")
+                                    if (audioFile.exists()) {
+                                        try {
+                                            audioPlayer.playAudio(audioFile.absolutePath)
+                                        } catch (e: Exception) {
+                                            Log.e("WordDetailsScreen", "Failed to play audio: ${e.message}")
+                                            Text("Audio not available", Modifier.padding(8.dp))
+                                        }
                                     }
                                 }
                             }
