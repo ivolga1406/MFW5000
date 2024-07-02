@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -114,9 +113,7 @@ fun WordDetailsScreen(
                     .padding(padding)
 
             ) {
-                Column{
-                    LazyColumn{
-                        item {
+                Column(modifier = Modifier.matchParentSize()){
                             when (wordDetail) {
                                 is Response.Loading -> Text("Loading...")
                                 is Response.Success -> {
@@ -160,12 +157,11 @@ fun WordDetailsScreen(
                                 }
                                 is Response.Failure -> Text("Error: ${(wordDetail as Response.Failure).e?.message}")
                             }
-                        }
-                    }
                     Spacer(modifier = Modifier.weight(1f))
                     Column {
                         Text(text = "Swipe up for repeat sound", modifier = Modifier.padding(8.dp))
                         Text(text = "Swipe left to go back", modifier = Modifier.padding(8.dp))
+
                     }
                 }
             }
