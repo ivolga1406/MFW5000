@@ -78,7 +78,7 @@ fun WordsScreen(
                         ) { change, dragAmount ->
                             change.consume()
                             if (isSwiping) {
-                                if (dragAmount < -100) {
+                                if (dragAmount < -50) {
                                     isSwiping = false
                                     currentWordIndex++
                                     if (currentWordIndex < words.size) {
@@ -86,7 +86,7 @@ fun WordsScreen(
                                     } else {
                                         navController.popBackStack()
                                     }
-                                } else if (dragAmount > 100) {
+                                } else if (dragAmount > 50) {
                                     isSwiping = false
                                     navController.currentBackStackEntry?.savedStateHandle?.set("currentWordIndex", currentWordIndex)
                                     navController.navigate("word_details/${words[currentWordIndex].id}")
@@ -105,7 +105,7 @@ fun WordsScreen(
                         ) { change, dragAmount ->
                             change.consume()
                             if (isSwiping) {
-                                if (dragAmount > 100 || dragAmount < -100) {
+                                if (dragAmount > 50) {
                                     isSwiping = false
                                     val wordToExclude = words[currentWordIndex]
                                     viewModel.excludeWordFromCollection(wordToExclude.id!!, collectionNumber)
@@ -115,6 +115,9 @@ fun WordsScreen(
                                     } else {
                                         navController.popBackStack()
                                     }
+                                } else if (dragAmount < -50) {
+                                    isSwiping = false
+                                    audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
                                 }
                             }
                         }
