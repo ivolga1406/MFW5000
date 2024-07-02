@@ -68,33 +68,6 @@ fun WordsScreen(
                     .fillMaxSize()
                     .padding(padding)
                     .pointerInput(Unit) {
-                        detectHorizontalDragGestures(
-                            onDragStart = {
-                                isSwiping = true
-                            },
-                            onDragEnd = {
-                                isSwiping = false
-                            }
-                        ) { change, dragAmount ->
-                            change.consume()
-                            if (isSwiping) {
-                                if (dragAmount < -50) {
-                                    isSwiping = false
-                                    currentWordIndex++
-                                    if (currentWordIndex < words.size) {
-                                        audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
-                                    } else {
-                                        navController.popBackStack()
-                                    }
-                                } else if (dragAmount > 50) {
-                                    isSwiping = false
-                                    navController.currentBackStackEntry?.savedStateHandle?.set("currentWordIndex", currentWordIndex)
-                                    navController.navigate("word_details/${words[currentWordIndex].id}")
-                                }
-                            }
-                        }
-                    }
-                    .pointerInput(Unit) {
                         detectVerticalDragGestures(
                             onDragStart = {
                                 isSwiping = true
@@ -107,9 +80,7 @@ fun WordsScreen(
                             if (isSwiping) {
                                 if (dragAmount > 50) {
                                     isSwiping = false
-                                    val wordToExclude = words[currentWordIndex]
-                                    viewModel.excludeWordFromCollection(wordToExclude.id!!, collectionNumber)
-                                    words.removeAt(currentWordIndex)
+                                    currentWordIndex++
                                     if (currentWordIndex < words.size) {
                                         audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
                                     } else {
@@ -118,6 +89,35 @@ fun WordsScreen(
                                 } else if (dragAmount < -50) {
                                     isSwiping = false
                                     audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
+                                }
+                            }
+                        }
+                    }
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures(
+                            onDragStart = {
+                                isSwiping = true
+                            },
+                            onDragEnd = {
+                                isSwiping = false
+                            }
+                        ) { change, dragAmount ->
+                            change.consume()
+                            if (isSwiping) {
+                                if (dragAmount < -50) {
+                                    isSwiping = false
+                                    val wordToExclude = words[currentWordIndex]
+                                    viewModel.excludeWordFromCollection(wordToExclude.id!!, collectionNumber)
+                                    words.removeAt(currentWordIndex)
+                                    if (currentWordIndex < words.size) {
+                                        audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
+                                    } else {
+                                        navController.popBackStack()
+                                    }
+                                } else if (dragAmount > 50) {
+                                    isSwiping = false
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("currentWordIndex", currentWordIndex)
+                                    navController.navigate("word_details/${words[currentWordIndex].id}")
                                 }
                             }
                         }
