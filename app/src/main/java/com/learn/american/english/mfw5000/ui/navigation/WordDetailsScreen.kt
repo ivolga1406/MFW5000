@@ -4,7 +4,12 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -55,49 +60,58 @@ fun WordDetailsScreen(
         topBar = {
             TopBar(title = (wordDetail as? Response.Success)?.data?.word ?: "Word Details")
         },
-        content = {
+        content = { padding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it)
-                    .padding(16.dp)
+                    .padding(padding)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures(
+                            onDragStart = {
+                                isSwiping = true
+                            },
+                            onDragEnd = {
+                                isSwiping = false
+                            }
+                        ) { change, dragAmount ->
+                            change.consume()
+                            if (dragAmount < -50 && isSwiping) {
+                                isSwiping = false
+                                navController.popBackStack()
+                            }
+                        }
+                    }
                     .pointerInput(Unit) {
                         detectVerticalDragGestures(
-                            onDragStart = { isSwiping = true },
-                            onDragEnd = { isSwiping = false },
-                            onVerticalDrag = { change, dragAmount ->
-                                change.consume()
-                                if (dragAmount < -50 && isSwiping) {
-                                    isSwiping = false
-                                    val audioFile = File(context.filesDir, "mp3/${(wordDetail as? Response.Success<Word>)?.data?.word}.mp3")
-                                    if (audioFile.exists()) {
-                                        try {
-                                            audioPlayer.playAudio(audioFile.absolutePath)
-                                        } catch (e: Exception) {
-                                            Log.e("WordDetailsScreen", "Failed to play audio: ${e.message}")
-                                        }
+                            onDragStart = {
+                                isSwiping = true
+                            },
+                            onDragEnd = {
+                                isSwiping = false
+                            }
+                        ) { change, dragAmount ->
+                            change.consume()
+                            if (dragAmount < -50 && isSwiping) {
+                                isSwiping = false
+                                val audioFile = File(
+                                    context.filesDir,
+                                    "mp3/${(wordDetail as? Response.Success<Word>)?.data?.word}.mp3"
+                                )
+                                if (audioFile.exists()) {
+                                    try {
+                                        audioPlayer.playAudio(audioFile.absolutePath)
+                                    } catch (e: Exception) {
+                                        Log.e(
+                                            "WordDetailsScreen",
+                                            "Failed to play audio: ${e.message}"
+                                        )
                                     }
                                 }
                             }
-                        )
-                    }
-                    .pointerInput(Unit) {
-                        detectHorizontalDragGestures(
-                            onDragStart = { isSwiping = true },
-                            onDragEnd = { isSwiping = false },
-                            onHorizontalDrag = { change, dragAmount ->
-                                change.consume()
-                                if (dragAmount < -50 && isSwiping) {
-                                    isSwiping = false
-                                    navController.popBackStack()
-                                }
-                            }
-                        )
+                        }
                     }
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                LazyColumn{
                     item {
                         when (wordDetail) {
                             is Response.Loading -> Text("Loading...")
@@ -145,6 +159,6 @@ fun WordDetailsScreen(
                     }
                 }
             }
-        }
+        },
     )
 }
