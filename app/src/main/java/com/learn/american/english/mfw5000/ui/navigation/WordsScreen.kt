@@ -3,6 +3,7 @@ package com.learn.american.english.mfw5000.ui.navigation
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -107,7 +108,10 @@ fun WordsScreen(
                                 if (dragAmount < -50) {
                                     isSwiping = false
                                     val wordToExclude = words[currentWordIndex]
-                                    viewModel.excludeWordFromCollection(wordToExclude.id!!, collectionNumber)
+                                    viewModel.excludeWordFromCollection(
+                                        wordToExclude.id!!,
+                                        collectionNumber
+                                    )
                                     words.removeAt(currentWordIndex)
                                     if (currentWordIndex < words.size) {
                                         audioPlayer.playAudio("${context.filesDir}/mp3/${words[currentWordIndex].word}.mp3")
@@ -116,17 +120,23 @@ fun WordsScreen(
                                     }
                                 } else if (dragAmount > 50) {
                                     isSwiping = false
-                                    navController.currentBackStackEntry?.savedStateHandle?.set("currentWordIndex", currentWordIndex)
+                                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                                        "currentWordIndex",
+                                        currentWordIndex
+                                    )
                                     navController.navigate("word_details/${words[currentWordIndex].id}")
                                 }
                             }
                         }
                     }
             ) {
-                Text(
-                    text = "Current word: $currentWordIndex / ${words.size}",
-                    modifier = Modifier.padding(16.dp)
-                )
+                Column {
+                    Text(text = "Current word: $currentWordIndex / ${words.size}", modifier = Modifier.padding(16.dp))
+                    Text(text = "Swipe up to repeat", modifier = Modifier.padding(16.dp))
+                    Text(text = "Swipe down for next", modifier = Modifier.padding(16.dp))
+                    Text(text = "Swipe left to remove", modifier = Modifier.padding(16.dp))
+                    Text(text = "Swipe right for details", modifier = Modifier.padding(16.dp))
+                }
             }
         },
     )

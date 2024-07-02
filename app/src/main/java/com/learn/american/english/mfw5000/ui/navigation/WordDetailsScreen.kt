@@ -6,7 +6,8 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -63,8 +64,6 @@ fun WordDetailsScreen(
         content = { padding ->
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(
                             onDragStart = {
@@ -110,52 +109,63 @@ fun WordDetailsScreen(
                             }
                         }
                     }
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(padding)
+
             ) {
-                LazyColumn{
-                    item {
-                        when (wordDetail) {
-                            is Response.Loading -> Text("Loading...")
-                            is Response.Success -> {
-                                val word = (wordDetail as Response.Success<Word>).data
-                                Column {
-                                    word.part_of_speech?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
-                                    }
-                                    word.definition?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
-                                    }
-                                    word.example_en?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
-                                    }
-                                    word.example_ru?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
-                                    }
-                                    val imageFile = File(context.filesDir, "jpg/${word.word}.jpg")
-                                    if (imageFile.exists()) {
-                                        Image(
-                                            painter = rememberImagePainter(imageFile),
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(200.dp),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                    }
-                                    if (shouldPlayNextAudio) {
-                                        val audioFile = File(context.filesDir, "mp3/${word.word}.mp3")
-                                        if (audioFile.exists()) {
-                                            try {
-                                                audioPlayer.playAudio(audioFile.absolutePath)
-                                            } catch (e: Exception) {
-                                                Log.e("WordDetailsScreen", "Failed to play audio: ${e.message}")
-                                                Text("Audio not available", Modifier.padding(8.dp))
+                Column{
+                    LazyColumn{
+                        item {
+                            when (wordDetail) {
+                                is Response.Loading -> Text("Loading...")
+                                is Response.Success -> {
+                                    val word = (wordDetail as Response.Success<Word>).data
+                                    Column {
+                                        word.part_of_speech?.let {
+                                            Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                        }
+                                        word.definition?.let {
+                                            Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                        }
+                                        word.example_en?.let {
+                                            Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                        }
+                                        word.example_ru?.let {
+                                            Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                        }
+                                        val imageFile = File(context.filesDir, "jpg/${word.word}.jpg")
+                                        if (imageFile.exists()) {
+                                            Image(
+                                                painter = rememberImagePainter(imageFile),
+                                                contentDescription = null,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(200.dp),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                        }
+                                        if (shouldPlayNextAudio) {
+                                            val audioFile = File(context.filesDir, "mp3/${word.word}.mp3")
+                                            if (audioFile.exists()) {
+                                                try {
+                                                    audioPlayer.playAudio(audioFile.absolutePath)
+                                                } catch (e: Exception) {
+                                                    Log.e("WordDetailsScreen", "Failed to play audio: ${e.message}")
+                                                    Text("Audio not available", Modifier.padding(8.dp))
+                                                }
                                             }
                                         }
                                     }
                                 }
+                                is Response.Failure -> Text("Error: ${(wordDetail as Response.Failure).e?.message}")
                             }
-                            is Response.Failure -> Text("Error: ${(wordDetail as Response.Failure).e?.message}")
                         }
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column {
+                        Text(text = "Swipe up for repeat sound", modifier = Modifier.padding(8.dp))
+                        Text(text = "Swipe left to go back", modifier = Modifier.padding(8.dp))
                     }
                 }
             }
