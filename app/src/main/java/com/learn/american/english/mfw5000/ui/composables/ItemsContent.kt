@@ -8,12 +8,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.learn.american.english.mfw5000.data.model.Item
+import com.learn.american.english.mfw5000.data.model.Word
 
 @Composable
 fun ItemsContent(
     padding: PaddingValues,
-    items: List<Item>,
+    items: List<Word>,
     deleteitem: (seriesId: String) -> Unit,
     onClick: (String?) -> Unit
 ) {

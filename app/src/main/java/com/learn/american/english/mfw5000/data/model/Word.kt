@@ -1,14 +1,15 @@
 package com.learn.american.english.mfw5000.data.model
 
 data class Word(
-    override var  id: String? = null,
-    override var  number: Int? = 0,
-    override var  word: String? = "",
-    override var  part_of_speech: String? = null,
-    override var  definition: String? = null,
-    override var  example_en: String? = null,
-    override var  example_ru: String? = null
-):Item()
+    var  id: String? = null,
+    var  number: Int? = 0,
+    var  word: String? = null,
+    var  part_of_speech: String? = null,
+    var  definition: String? = null,
+    var  example_en: String? = null,
+    var  example_ru: String? = null
+)
+//):Item()
 
 
 

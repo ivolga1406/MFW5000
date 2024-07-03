@@ -12,14 +12,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.learn.american.english.mfw5000.data.model.Item
+import com.learn.american.english.mfw5000.data.model.Word
 import com.learn.american.english.mfw5000.utils.AudioPlayer
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemCard(
-    word: Item,
+    word: Word,
     deleteBook: () -> Unit,
     onClick: (String?) -> Unit,
 ) {

@@ -1,12 +1,11 @@
 package com.learn.american.english.mfw5000.ui.composables
 
-import android.widget.ProgressBar
 import androidx.compose.runtime.Composable
-import com.learn.american.english.mfw5000.data.model.Item
 import com.learn.american.english.mfw5000.data.model.Response
+import com.learn.american.english.mfw5000.data.model.Word
 
 @Composable
-fun <T : List<Item>> Items(
+fun <T : List<Word>> Items(
     viewModelResponse: Response<T>,
     content: @Composable (items: T) -> Unit
 ) {
