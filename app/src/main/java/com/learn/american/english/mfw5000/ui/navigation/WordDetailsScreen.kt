@@ -85,6 +85,7 @@ fun WordDetailsScreen(
                             change.consume()
                             if (dragAmount < -50 && isSwiping) {
                                 isSwiping = false
+                                // Play the audio again on upward swipe
                                 val audioFile = File(
                                     context.filesDir,
                                     "mp3/${wordDetail?.word}.mp3"
@@ -145,6 +146,7 @@ fun WordDetailsScreen(
                                                 Text("Audio not available", Modifier.padding(8.dp))
                                             }
                                         }
+                                        shouldPlayNextAudio = false
                                     }
                                 }
                             }
