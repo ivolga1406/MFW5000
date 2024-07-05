@@ -1,6 +1,5 @@
 package com.learn.american.english.mfw5000.ui.navigation
 
-
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
