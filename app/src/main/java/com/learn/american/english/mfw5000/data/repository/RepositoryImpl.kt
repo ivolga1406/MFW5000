@@ -110,7 +110,7 @@ class RepositoryImpl @Inject constructor(
             val mp3Dir = File(localDir, "mp3")
 
             if (!jpgDir.exists()) jpgDir.mkdirs()
-            if (!mp3Dir.exists()) jpgDir.mkdirs()
+            if (!mp3Dir.exists()) mp3Dir.mkdirs()
 
             val jpgZipRef = storage.reference.child("5000_words/all_jpg.zip")
             val mp3ZipRef = storage.reference.child("5000_words/all_mp3.zip")
