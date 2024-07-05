@@ -27,9 +27,10 @@ fun Navigation() {
                 Text("Invalid range")
             }
         }
-        composable("word_details/{wordId}") { backStackEntry ->
+        composable("word_details/{wordId}/{collectionNumber}") { backStackEntry ->
             val wordId = backStackEntry.arguments?.getString("wordId")
-            WordDetailsScreen(wordId = wordId, navController = navController)
+            val collectionNumber = backStackEntry.arguments?.getString("collectionNumber")?.toIntOrNull() ?: 0
+            WordDetailsScreen(wordId = wordId, collectionNumber = collectionNumber, navController = navController)
         }
     }
 }

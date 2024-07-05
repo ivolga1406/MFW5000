@@ -1,6 +1,5 @@
 package com.learn.american.english.mfw5000.ui.navigation
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.learn.american.english.mfw5000.data.model.Response
-import com.learn.american.english.mfw5000.ui.ViewModel
+import com.learn.american.english.mfw5000.viewModel.ViewModel
 import kotlinx.coroutines.launch
 
 @Composable

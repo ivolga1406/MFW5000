@@ -34,7 +34,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learn.american.english.mfw5000.data.model.Response
 import com.learn.american.english.mfw5000.data.model.Word
-import com.learn.american.english.mfw5000.ui.theme.Repository
+import com.learn.american.english.mfw5000.viewModel.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -91,7 +91,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.learn.american.english.mfw5000.ui.ViewModel
+import com.learn.american.english.mfw5000.viewModel.ViewModel
 import com.learn.american.english.mfw5000.ui.composables.Items
 import com.learn.american.english.mfw5000.ui.composables.ItemsContent
 import com.learn.american.english.mfw5000.ui.composables.TopBar

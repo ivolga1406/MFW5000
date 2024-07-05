@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.learn.american.english.mfw5000.data.model.Word
-import com.learn.american.english.mfw5000.ui.ViewModel
+import com.learn.american.english.mfw5000.viewModel.ViewModel
 import com.learn.american.english.mfw5000.ui.composables.TopBar
 import com.learn.american.english.mfw5000.utils.AudioPlayer
 
@@ -124,7 +124,7 @@ fun WordsScreen(
                                         "currentWordIndex",
                                         currentWordIndex
                                     )
-                                    navController.navigate("word_details/${words[currentWordIndex].id}")
+                                    navController.navigate("word_details/${words[currentWordIndex].id}/$collectionNumber")
                                 }
                             }
                         }

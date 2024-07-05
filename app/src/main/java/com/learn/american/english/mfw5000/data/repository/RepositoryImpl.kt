@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.learn.american.english.mfw5000.data.model.Response
 import com.learn.american.english.mfw5000.data.model.Word
-import com.learn.american.english.mfw5000.ui.theme.Repository
+import com.learn.american.english.mfw5000.viewModel.Repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -92,21 +92,6 @@ class RepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 emit(Response.Failure(e))
             }
-        }
-    }
-
-    override fun getWordById(wordId: String): Flow<Response<Word>> = flow {
-        emit(Response.Loading)
-        try {
-            val documentSnapshot = wordsRef.document(wordId).get().await()
-            val word = documentSnapshot.toObject<Word>()
-            if (word != null) {
-                emit(Response.Success(word))
-            } else {
-                emit(Response.Failure(Exception("Word not found")))
-            }
-        } catch (e: Exception) {
-            emit(Response.Failure(e))
         }
     }
 
