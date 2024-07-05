@@ -5,7 +5,7 @@ import android.util.Log
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 
-class AudioPlayer(private val context: Context) {
+class AudioPlayer(context: Context) {
     private val exoPlayer: ExoPlayer = ExoPlayer.Builder(context).build()
 
     fun playAudio(url: String) {

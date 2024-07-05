@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.learn.american.english.mfw5000.ui.composables.TopBar
 import com.learn.american.english.mfw5000.utils.AudioPlayer
 import com.learn.american.english.mfw5000.viewModel.ViewModel
@@ -110,24 +110,24 @@ fun WordDetailsScreen(
                     when (wordDetail) {
                         null -> Text("Loading...")
                         else -> {
-                            wordDetail?.let { word ->
+                            wordDetail.let { word ->
                                 Column {
-                                    word.part_of_speech?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                    word.partOfSpeech?.let {
+                                        Text(text = it, modifier = Modifier.padding(8.dp))
                                     }
                                     word.definition?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                        Text(text = it, modifier = Modifier.padding(8.dp))
                                     }
-                                    word.example_en?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                    word.exampleEn?.let {
+                                        Text(text = it, modifier = Modifier.padding(8.dp))
                                     }
-                                    word.example_ru?.let {
-                                        Text(text = "$it", modifier = Modifier.padding(8.dp))
+                                    word.exampleRu?.let {
+                                        Text(text = it, modifier = Modifier.padding(8.dp))
                                     }
                                     val imageFile = File(context.filesDir, "jpg/${word.word}.jpg")
                                     if (imageFile.exists()) {
                                         Image(
-                                            painter = rememberImagePainter(imageFile),
+                                            painter = rememberAsyncImagePainter(imageFile),
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .fillMaxWidth()

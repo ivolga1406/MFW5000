@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class RepositoryImpl @Inject constructor(
     @Named("WordsRef") private val wordsRef: CollectionReference,
-    private val context: Context
+    context: Context
 ) : Repository {
 
     private val wordsCache = mutableMapOf<Int, MutableList<Word>>()
@@ -69,7 +69,7 @@ class RepositoryImpl @Inject constructor(
             emit(Response.Loading)
             try {
                 val cachedWords = wordsCache[collectionNumber]
-                if (cachedWords != null && cachedWords.isNotEmpty()) {
+                if (!cachedWords.isNullOrEmpty()) {
                     emit(Response.Success(cachedWords))
                 } else {
                     val start = collectionNumber * 50 + 1
