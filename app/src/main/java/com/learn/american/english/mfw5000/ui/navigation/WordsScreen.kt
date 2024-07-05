@@ -31,7 +31,7 @@ fun WordsScreen(
     val wordsResponse by viewModel.wordsResponse.collectAsState()
     val context = LocalContext.current
     val audioPlayer = remember { AudioPlayer(context) }
-    var currentWordIndex by remember { mutableStateOf(0) }
+    var currentWordIndex by remember { mutableIntStateOf(0) }
     var isSwiping by remember { mutableStateOf(false) }
     val words = remember { mutableStateListOf<Word>() }
 
