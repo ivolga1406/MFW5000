@@ -118,6 +118,16 @@ class RepositoryImpl @Inject constructor(
             downloadAndExtractZip(jpgZipRef, jpgDir)
             downloadAndExtractZip(mp3ZipRef, mp3Dir)
 
+            // After downloading, get all word collections and save to cache
+            for (collectionNumber in 0..79) {
+                getWordsCollection(collectionNumber).collect { response ->
+                    if (response is Response.Success) {
+                        wordsCache[collectionNumber] = response.data.toMutableList()
+                    }
+                }
+            }
+            saveCache()
+
             emit(Response.Success(Unit))
         } catch (e: Exception) {
             emit(Response.Failure(e))
