@@ -9,4 +9,6 @@ interface Repository {
     fun getWordsCollection(collectionNumber: Int): Flow<Response<List<Word>>>
     suspend fun downloadAllMedia(context: Context): Flow<Response<Unit>>
     fun excludeWordFromRange(wordId: String, collectionNumber: Int)
+    fun incrementCounter(collectionNumber: Int)
+    fun getCounter(collectionNumber: Int): Int
 }

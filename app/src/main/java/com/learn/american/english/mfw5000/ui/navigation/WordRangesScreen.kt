@@ -9,19 +9,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.learn.american.english.mfw5000.viewModel.ViewModel
 
 @Composable
-fun WordRangesScreen(navController: NavController) {
+fun WordRangesScreen(
+    navController: NavController,
+    viewModel: ViewModel = hiltViewModel()
+) {
     val ranges = List(80) { it } // Each item represents a collection number
     LazyColumn {
         items(ranges) { collectionNumber ->
             val rangeText = "${collectionNumber * 50 + 1}-${(collectionNumber + 1) * 50}"
+            val counter = viewModel.getCounter(collectionNumber)
             Text(
-                text = rangeText,
+                text = "$rangeText $counter",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { navController.navigate("words/$collectionNumber") }
+                    .clickable {
+                        viewModel.incrementCounter(collectionNumber)
+                        navController.navigate("words/$collectionNumber")
+                    }
                     .padding(16.dp)
             )
         }

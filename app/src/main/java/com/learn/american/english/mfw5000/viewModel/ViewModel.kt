@@ -48,7 +48,14 @@ class ViewModel @Inject constructor(
         }
     }
 
-    // Add this public method
+    fun incrementCounter(collectionNumber: Int) {
+        repo.incrementCounter(collectionNumber)
+    }
+
+    fun getCounter(collectionNumber: Int): Int {
+        return repo.getCounter(collectionNumber)
+    }
+
     fun getCurrentCollectionWordsCache(): List<Word> {
         return currentCollectionWordsCache
     }

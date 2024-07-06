@@ -32,11 +32,13 @@ class RepositoryImpl @Inject constructor(
 ) : Repository {
 
     private val wordsCache = mutableMapOf<Int, MutableList<Word>>()
+    private val collectionCounters = mutableMapOf<Int, Int>()
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences("words_cache", Context.MODE_PRIVATE)
     private val gson: Gson = GsonBuilder().serializeNulls().create()
 
     init {
         loadCache()
+        loadCounters()
     }
 
     private fun loadCache() {
@@ -52,6 +54,19 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    private fun loadCounters() {
+        val countersJson = sharedPreferences.getString("collectionCounters", null)
+        if (!countersJson.isNullOrEmpty()) {
+            val type = object : TypeToken<MutableMap<Int, Int>>() {}.type
+            try {
+                val cachedCounters: MutableMap<Int, Int> = gson.fromJson(countersJson, type)
+                collectionCounters.putAll(cachedCounters)
+            } catch (e: Exception) {
+                e.printStackTrace() // Handle the exception as needed
+            }
+        }
+    }
+
     private fun saveCache() {
         val editor = sharedPreferences.edit()
         try {
@@ -61,6 +76,18 @@ class RepositoryImpl @Inject constructor(
             editor.apply()
         } catch (e: Exception) {
             Log.e("RepositoryImpl", "Error serializing wordsCache: ${e.message}", e)
+        }
+    }
+
+    private fun saveCounters() {
+        val editor = sharedPreferences.edit()
+        try {
+            val type = object : TypeToken<MutableMap<Int, Int>>() {}.type
+            val json = gson.toJson(collectionCounters, type)
+            editor.putString("collectionCounters", json)
+            editor.apply()
+        } catch (e: Exception) {
+            Log.e("RepositoryImpl", "Error serializing collectionCounters: ${e.message}", e)
         }
     }
 
@@ -110,7 +137,7 @@ class RepositoryImpl @Inject constructor(
             val mp3Dir = File(localDir, "mp3")
 
             if (!jpgDir.exists()) jpgDir.mkdirs()
-            if (!mp3Dir.exists()) mp3Dir.mkdirs()
+            if (!mp3Dir.exists()) jpgDir.mkdirs()
 
             val jpgZipRef = storage.reference.child("5000_words/all_jpg.zip")
             val mp3ZipRef = storage.reference.child("5000_words/all_mp3.zip")
@@ -161,5 +188,14 @@ class RepositoryImpl @Inject constructor(
     override fun excludeWordFromRange(wordId: String, collectionNumber: Int) {
         wordsCache[collectionNumber] = wordsCache[collectionNumber]?.filterNot { it.id == wordId }?.toMutableList() ?: mutableListOf()
         saveCache()
+    }
+
+    override fun incrementCounter(collectionNumber: Int) {
+        collectionCounters[collectionNumber] = (collectionCounters[collectionNumber] ?: 0) + 1
+        saveCounters()
+    }
+
+    override fun getCounter(collectionNumber: Int): Int {
+        return collectionCounters[collectionNumber] ?: 0
     }
 }
