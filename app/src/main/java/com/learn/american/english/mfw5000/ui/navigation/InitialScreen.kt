@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -26,34 +27,37 @@ fun InitialScreen(
     val scope = rememberCoroutineScope()
     val downloadResponse = viewModel.downloadResponse.collectAsState()
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
-        Button(
-            onClick = {
-                scope.launch {
-                    viewModel.downloadAllMedia(context)
-                }
-            },
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Text("Download all mp3 and jpg")
+    // Check if media was downloaded and navigate to WordRangesScreen if true
+    LaunchedEffect(Unit) {
+        if (viewModel.wasMediaDownloaded()) {
+            navController.navigate("word_ranges") {
+                popUpTo("initial_screen") { inclusive = true }
+            }
         }
+    }
 
-        Button(
-            onClick = {
-                navController.navigate("word_ranges")
-            },
-            modifier = Modifier.padding(8.dp)
+    if (!viewModel.wasMediaDownloaded()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp)
         ) {
-            Text("I have already downloaded all")
-        }
+            Text("We need to download data", Modifier.padding(8.dp))
 
-        when (val response = downloadResponse.value) {
-            is Response.Loading -> Text("Downloading...", Modifier.padding(8.dp))
-            is Response.Success -> navController.navigate("word_ranges")
-            is Response.Failure -> Text("Error: ${response.e?.message}", Modifier.padding(8.dp))
-            else -> {}
+            Button(
+                onClick = {
+                    scope.launch {
+                        viewModel.downloadAllMedia(context)
+                    }
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text("OK")
+            }
+
+            when (val response = downloadResponse.value) {
+                is Response.Loading -> Text("Downloading...", Modifier.padding(8.dp))
+                is Response.Success -> navController.navigate("word_ranges")
+                is Response.Failure -> Text("Error: ${response.e?.message}", Modifier.padding(8.dp))
+            }
         }
     }
 }

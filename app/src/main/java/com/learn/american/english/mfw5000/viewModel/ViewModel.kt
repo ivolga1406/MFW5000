@@ -59,4 +59,8 @@ class ViewModel @Inject constructor(
     fun getCurrentCollectionWordsCache(): List<Word> {
         return currentCollectionWordsCache
     }
+
+    fun wasMediaDownloaded(): Boolean {
+        return repo.wasMediaDownloaded()
+    }
 }

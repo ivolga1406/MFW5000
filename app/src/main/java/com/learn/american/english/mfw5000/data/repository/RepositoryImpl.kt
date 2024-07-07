@@ -36,6 +36,12 @@ class RepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences("words_cache", Context.MODE_PRIVATE)
     private val gson: Gson = GsonBuilder().serializeNulls().create()
 
+    private var mediaWasDownloaded: Boolean
+        get() = sharedPreferences.getBoolean("mediaWasDownloaded", false)
+        set(value) {
+            sharedPreferences.edit().putBoolean("mediaWasDownloaded", value).apply()
+        }
+
     init {
         loadCache()
         loadCounters()
@@ -137,7 +143,7 @@ class RepositoryImpl @Inject constructor(
             val mp3Dir = File(localDir, "mp3")
 
             if (!jpgDir.exists()) jpgDir.mkdirs()
-            if (!mp3Dir.exists()) jpgDir.mkdirs()
+            if (!mp3Dir.exists()) mp3Dir.mkdirs()
 
             val jpgZipRef = storage.reference.child("5000_words/all_jpg.zip")
             val mp3ZipRef = storage.reference.child("5000_words/all_mp3.zip")
@@ -154,6 +160,9 @@ class RepositoryImpl @Inject constructor(
                 }
             }
             saveCache()
+
+            // Set mediaWasDownloaded to true
+            mediaWasDownloaded = true
 
             emit(Response.Success(Unit))
         } catch (e: Exception) {
@@ -197,5 +206,9 @@ class RepositoryImpl @Inject constructor(
 
     override fun getCounter(collectionNumber: Int): Int {
         return collectionCounters[collectionNumber] ?: 0
+    }
+
+    override fun wasMediaDownloaded(): Boolean {
+        return mediaWasDownloaded
     }
 }

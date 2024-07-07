@@ -11,4 +11,5 @@ interface Repository {
     fun excludeWordFromRange(wordId: String, collectionNumber: Int)
     fun incrementCounter(collectionNumber: Int)
     fun getCounter(collectionNumber: Int): Int
+    fun wasMediaDownloaded(): Boolean // Add this line
 }
