@@ -36,12 +36,12 @@ fun InitialScreen(
         }
     }
 
-    if (!viewModel.wasMediaDownloaded()) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp)
-        ) {
-            Text("We need to download data", Modifier.padding(8.dp))
 
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp)
+    ) {
+        if (!viewModel.wasMediaDownloaded()) {
+            Text("We need to download data", Modifier.padding(8.dp))
             Button(
                 onClick = {
                     scope.launch {
@@ -49,15 +49,16 @@ fun InitialScreen(
                     }
                 },
                 modifier = Modifier.padding(8.dp)
+
             ) {
                 Text("OK")
             }
+        }
 
-            when (val response = downloadResponse.value) {
-                is Response.Loading -> Text("Downloading...", Modifier.padding(8.dp))
-                is Response.Success -> navController.navigate("word_ranges")
-                is Response.Failure -> Text("Error: ${response.e?.message}", Modifier.padding(8.dp))
-            }
+    when (val response = downloadResponse.value) {
+            is Response.Loading -> Text("Downloading...", Modifier.padding(8.dp))
+            is Response.Success -> navController.navigate("word_ranges")
+            is Response.Failure -> Text("Error: ${response.e?.message}", Modifier.padding(8.dp))
         }
     }
 }
