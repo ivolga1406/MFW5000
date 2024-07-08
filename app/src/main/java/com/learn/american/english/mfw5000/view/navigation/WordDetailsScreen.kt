@@ -1,4 +1,4 @@
-package com.learn.american.english.mfw5000.ui.navigation
+package com.learn.american.english.mfw5000.view.navigation
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.learn.american.english.mfw5000.ui.composables.TopBar
+import com.learn.american.english.mfw5000.view.composables.TopBar
 import com.learn.american.english.mfw5000.utils.AudioPlayer
 import com.learn.american.english.mfw5000.viewModel.ViewModel
 import java.io.File

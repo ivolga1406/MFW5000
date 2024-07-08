@@ -1,4 +1,4 @@
-package com.learn.american.english.mfw5000.ui.navigation
+package com.learn.american.english.mfw5000.view.navigation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -1,4 +1,4 @@
-package com.learn.american.english.mfw5000.ui.navigation
+package com.learn.american.english.mfw5000.view.navigation
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

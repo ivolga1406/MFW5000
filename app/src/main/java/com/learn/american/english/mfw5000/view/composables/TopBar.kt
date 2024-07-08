@@ -1,4 +1,4 @@
-package com.learn.american.english.mfw5000.ui.composables
+package com.learn.american.english.mfw5000.view.composables
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable

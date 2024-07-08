@@ -5,7 +5,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.learn.american.english.mfw5000.Constants.WORDS
-import com.learn.american.english.mfw5000.data.repository.RepositoryImpl
+import com.learn.american.english.mfw5000.model.repository.RepositoryImpl
 import com.learn.american.english.mfw5000.viewModel.Repository
 import dagger.Module
 import dagger.Provides

@@ -1,4 +1,4 @@
-package com.learn.american.english.mfw5000.ui.theme
+package com.learn.american.english.mfw5000.view.theme
 
 import android.app.Activity
 import android.os.Build

@@ -3,8 +3,8 @@ package com.learn.american.english.mfw5000.viewModel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.learn.american.english.mfw5000.data.model.Response
-import com.learn.american.english.mfw5000.data.model.Word
+import com.learn.american.english.mfw5000.model.model.Response
+import com.learn.american.english.mfw5000.model.model.Word
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.learn.american.english.mfw5000.data.model
+package com.learn.american.english.mfw5000.model.model
 
 sealed class Response<out T> {
     object Loading: Response<Nothing>()
