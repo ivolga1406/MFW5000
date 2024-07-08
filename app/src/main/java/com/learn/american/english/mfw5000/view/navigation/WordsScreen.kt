@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.learn.american.english.mfw5000.model.model.Word
+import com.learn.american.english.mfw5000.data.model.model.Word
 import com.learn.american.english.mfw5000.viewModel.ViewModel
 import com.learn.american.english.mfw5000.view.composables.TopBar
 import com.learn.american.english.mfw5000.utils.AudioPlayer

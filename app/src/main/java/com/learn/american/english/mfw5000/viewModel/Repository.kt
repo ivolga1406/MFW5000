@@ -1,8 +1,8 @@
 package com.learn.american.english.mfw5000.viewModel
 
 import android.content.Context
+import com.learn.american.english.mfw5000.data.model.model.Word
 import com.learn.american.english.mfw5000.model.model.Response
-import com.learn.american.english.mfw5000.model.model.Word
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
