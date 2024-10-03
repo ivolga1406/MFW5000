@@ -8,7 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -27,6 +31,9 @@ fun InitialScreen(
     val scope = rememberCoroutineScope()
     val downloadResponse = viewModel.downloadResponse.collectAsState()
 
+    // Flag to track whether the download has been triggered
+    var isDownloadStarted by remember { mutableStateOf(false) }
+
     // Check if media was downloaded and navigate to WordRangesScreen if true
     LaunchedEffect(Unit) {
         if (viewModel.wasMediaDownloaded()) {
@@ -36,29 +43,42 @@ fun InitialScreen(
         }
     }
 
-
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         if (!viewModel.wasMediaDownloaded()) {
             Text("We need to download data", Modifier.padding(8.dp))
+
             Button(
                 onClick = {
+                    isDownloadStarted = true // Set flag when download starts
                     scope.launch {
                         viewModel.downloadAllMedia(context)
                     }
                 },
                 modifier = Modifier.padding(8.dp)
-
             ) {
                 Text("OK")
             }
         }
 
-    when (val response = downloadResponse.value) {
-            is Response.Loading -> Text("Downloading...", Modifier.padding(8.dp))
-            is Response.Success -> navController.navigate("word_ranges")
-            is Response.Failure -> Text("Error: ${response.e?.message}", Modifier.padding(8.dp))
+        // Show "Downloading..." only when the download has started
+        if (isDownloadStarted) {
+            when (val response = downloadResponse.value) {
+                is Response.Loading -> {
+                    Column {
+                        Text("Downloading...", Modifier.padding(8.dp))
+                        Text(
+                            "Please be patient. Downloading takes approximately 1-2 minutes depending on internet speed.",
+                            Modifier.padding(8.dp)
+                        )
+                    }
+                }
+                is Response.Success -> navController.navigate("word_ranges")
+                is Response.Failure -> Text("Error: ${response.e?.message}", Modifier.padding(8.dp))
+            }
         }
     }
 }
