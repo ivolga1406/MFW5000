@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,7 +30,7 @@ fun WordRangesScreen(
 ) {
     val ranges = List(80) { it } // Each item represents a collection number
 
-    LazyColumn {
+    LazyColumn (modifier = Modifier.padding(16.dp)) {
         items(ranges) { collectionNumber ->
             val rangeText = "${collectionNumber * 50 + 1}-${(collectionNumber + 1) * 50}"
             val counter = viewModel.getCounter(collectionNumber)
@@ -41,9 +42,14 @@ fun WordRangesScreen(
                         viewModel.incrementCounter(collectionNumber)
                         navController.navigate("words/$collectionNumber")
                     }
-                    .padding(16.dp)
+                    .padding(8.dp)
             ) {
-                Text(text = rangeText, modifier = Modifier.padding(bottom = 8.dp))
+//                Text(text = rangeText, modifier = Modifier.padding(bottom = 8.dp))
+                Text(
+                    text = "$rangeText",
+                    style = MaterialTheme.typography.titleLarge, // Use a predefined style
+                    modifier = Modifier.padding(bottom = 2.dp)
+                )
 
                 // Show progress bar based on the counter value
                 ProgressBar(counter = counter)
